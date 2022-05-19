@@ -1,0 +1,199 @@
+Questo cheatsheet contiene il cheatsheet pubblicato dal prof Bergamasco e qualche funzione aggiuntiva utilizzata durante il tutorato.
+
+ lldb cheatsheet                                                    rev.06042022
+=================================================================================
+ Architettura Degli Elaboratori Mod 2
+ Filippo Bergamasco
+
+
+
+
+To run:
+$ lldb <executable or image>
+
+
+
+
+At command prompt (lldb) you can give one of the following commands:
+
+
+| Function                       | Command                                     |
+| ============================== | =========================================== |
+| Run the process and stop       | process launch --stop-at-entry <executable> |
+| at the beginning of _start     |                                             |
+|--------------------------------+---------------------------------------------|
+| list code at the current       | f                                           |
+| frame                          |                                             |
+|--------------------------------+---------------------------------------------|
+| show registers                 | register read                               |
+|                                | re read                                     |
+|--------------------------------+---------------------------------------------|
+| show register x0               | re read x0                                  |
+|--------------------------------+---------------------------------------------|
+| step in to next instruction    | step (or s)                                 |
+|--------------------------------+---------------------------------------------|
+| step over to next instruction  | next                                        |
+|--------------------------------+---------------------------------------------|
+| step out                       | finish                                      |
+|--------------------------------+---------------------------------------------|
+| continue execution             | continue                                    |
+|--------------------------------+---------------------------------------------|
+| dump symbols                   | image dump symtab <executable               |
+|--------------------------------+---------------------------------------------|
+| disassemble from addr          | disassemble -s <address>                    |
+|--------------------------------+---------------------------------------------|
+| dump memory from <addr1>       | x -f <f> <addr1> <addr2>                    |
+| to <addr2> with format <f>     |                                             |
+|                                | Formats:                                    |
+|                                | c : character   y: bytes                    |
+|                                | d : decimal     Y: bytes with ascii         |
+|                                | f : float       u: unsigned decimal         |
+|                                | x : hex                                     |
+|--------------------------------+---------------------------------------------|
+| dump memory content of a       |                                             |
+| symbol                         | x [-f <f>] [-c count]  &symbol              |
+|--------------------------------+---------------------------------------------|
+| print variable                 | p <varname>                                 |
+|--------------------------------+---------------------------------------------|
+| show local variables           | fr v -a                                     |
+|--------------------------------+---------------------------------------------|
+| Attach to a local QEMU process | gdb-remote localhost:1234                   |
+| waiting for debugger           |                                             |
+|--------------------------------+---------------------------------------------|
+| list threads                   | thread list                                 |
+|--------------------------------+---------------------------------------------|
+| switch to thread <n>           | t <n>                                       |
+|--------------------------------+---------------------------------------------|
+| exit lldb                      | quit                                        |
+|--------------------------------+---------------------------------------------|
+
+
+ LLDB can be used to evaluate generic expressions:
+
+
+(lldb) e -f <format> -- <c-like expression>
+
+
+
+
+
+
+| Format name             | Abbr | Description                                 |
+| ======================= | ==== | =========================================== |
+| default                 |      | the default LLDB algorithm is used to       |
+|                         |      | pick a format                               |
+|-------------------------+------+---------------------------------------------|
+| boolean                 | B    | show this as a true/false boolean, using    |
+|                         |      | the customary rule that 0 is false and      |
+|                         |      | everything else is true                     |
+|-------------------------+------+---------------------------------------------|
+| binary                  | b    | show this as a sequence of bits             |
+|-------------------------+------+---------------------------------------------|
+| bytes                   | y    | show the bytes one after the other          |
+|-------------------------+------+---------------------------------------------|
+| bytes with ASCII        | Y    | show the bytes, but try to display them     |
+|                         |      | as ASCII characters as well                 |
+|-------------------------+------+---------------------------------------------|
+| character               | c    | show bytes as ASCII characters              |
+|-------------------------+------+---------------------------------------------|
+| printable character     | C    | show bytes as printable ASCII characters    |
+|-------------------------+------+---------------------------------------------|
+| complex float           | F    | interpret this value as the real/imaginary  |
+|                         |      | part of a complex floating-point number     |
+|-------------------------+------+---------------------------------------------|
+| c-string                | s    | show this as a 0-terminated C string        |
+|-------------------------+------+---------------------------------------------|
+| decimal                 | d    | show this as a signed integer number        |
+|-------------------------+------+---------------------------------------------|
+| enumeration             | E    | show this as an enumeration                 |
+|-------------------------+------+---------------------------------------------|
+| hex                     | x    | show this as in hexadecimal notation        |
+|-------------------------+------+---------------------------------------------|
+| float                   | f    | show this as a floating-point number        |
+|-------------------------+------+---------------------------------------------|
+| octal                   | o    | show this in octal notation                 |
+|-------------------------+------+---------------------------------------------|
+| OSType                  | O    | show this as a MacOS OSType                 |
+|-------------------------+------+---------------------------------------------|
+| unicode16               | U    | show this as UTF-16 characters              |
+|-------------------------+------+---------------------------------------------|
+| unicode32               |      | show this as UTF-32 characters              |
+|-------------------------+------+---------------------------------------------|
+| unsigned decimal        | u    | show this as an unsigned integer number     |
+|-------------------------+------+---------------------------------------------|
+| pointer                 | p    | show this as a native pointer (unless this  |
+|                         |      | is really a pointer the resulting address   |
+|                         |      | will probably be invalid)                   |
+|-------------------------+------+---------------------------------------------|
+| char[]                  |      | show this as an array of characters         |
+|-------------------------+------+---------------------------------------------|
+| int8_t[], uint8_t[]     |      |                                             |
+| int16_t[],uint16_t[]    |      |                                             |
+| int32_t[], uint32_t[]   |      |                                             |
+| int64_t[], uint64_t[]   |      | show this as an array of the corresponding  |
+| uint128_t[]             |      | integer type                                |
+|-------------------------+------+---------------------------------------------|
+| float32[], float64[]    |      | show this as an array of the corresponding  |
+|                         |      | float type                                  |
+|-------------------------+------+---------------------------------------------|
+| complex integer         | I    | interpret this value as the real and        |
+|                         |      | imaginary part of a complex integer number  |
+|-------------------------+------+---------------------------------------------|
+| character array         | a    | show this as a character array              |
+|-------------------------+------+---------------------------------------------|
+| address                 | A    | show this as an address target              |
+|                         |      | (symbol/file/line + offset),                |
+|                         |      | possibly also the string this address       |
+|                         |      | is pointing to                              |
+|-------------------------+------+---------------------------------------------|
+| hex float               |      | show this as hexadecimal floating point     |
+|-------------------------+------+---------------------------------------------|
+| instruction             | i    | show this as an disassembled opcode         |
+|-------------------------+------+---------------------------------------------|
+| void                    | v    | don't show anything                         |
+|-------------------------+------+---------------------------------------------|
+
+
+Examples:
+===============
+
+(lldb) e -f b -- (char)100
+(char) $0 = 0b01100100
+
+(lldb) e -f b -- (char)-100
+(char) $1 = 0b10011100
+
+(lldb) e -f d -- (unsigned short)0xFFAA
+(unsigned short) $2 = -86
+
+(lldb) e -f d -- (short)0xFFAA
+(short) $3 = -86
+
+(lldb) e -f u -- (short)0xFFAA
+(short) $4 = 65450
+
+(lldb) e -f u -- (unsigned short)0xFFAA
+(unsigned short) $5 = 65450
+
+(lldb) e -f u -- (char)0b10011100
+(char) $6 = 156
+
+(lldb) e -f d -- (char)0b10011100
+(char) $7 = -100
+
+------------------------------------------------------------------------------
+Funzioni aggiuntive usate durante il tutorato
+------------------------------------------------------------------------------
+
+| Function                       | Command                                     |
+| ============================== | =========================================== |
+| set a breakpoint on line/symbol| b <line number/symbol>                      |
+|--------------------------------+---------------------------------------------|
+| show other breakpoint options  | breakpoint                                  |   
+|--------------------------------+---------------------------------------------|
+| set a breakpoint on line/symbol| b <line number/symbol>                      |   
+|--------------------------------+---------------------------------------------|
+|--------------------------------+---------------------------------------------|
+| execute <command> at each step | target stop-hook add --one-liner "<command>"|
+|--------------------------------+---------------------------------------------|
+
